@@ -48,9 +48,9 @@ let tHeight;
 
 let squaresSize = 30;
 let squaresSizeClass = "large";
-let foodQuantity = 25;
+let foodQuantity = 50;
 let score = 0;
-let speed = 100;
+let speed = 200;
 
 const table = document.querySelector('.table');
 
@@ -128,20 +128,28 @@ function drawFood(){
 document.addEventListener('keydown', (e) => {
     switch (e.key) {
         case 'ArrowLeft':
-            direction = {x: -1, y: 0};
-            move(-1, 0);
+            if (direction.x !== 1) {
+                direction = {x: -1, y: 0};
+                move(-1, 0);
+            }
             break;
         case 'ArrowUp':
-            direction = {x: 0, y: -1};
-            move(0, -1);
+            if (direction.y !== 1) {
+                direction = {x: 0, y: -1};
+                move(0, -1);
+            }
             break;
         case 'ArrowRight':
-            direction = {x: 1, y: 0};
-            move(1, 0);
+            if (direction.x !== -1) {
+                direction = {x: 1, y: 0};
+                move(1, 0);
+            }
             break;
         case 'ArrowDown':
-            direction = {x: 0, y: 1};
-            move(0, 1);
+            if (direction.y !== -1) {
+                direction = {x: 0, y: 1};
+                move(0, 1);
+            }
             break;
     }
 });
@@ -207,6 +215,12 @@ document.getElementById('control').addEventListener('click', () => {
 document.getElementById('restart').addEventListener('click', () => {
     restart();
 });
+
+
+document.getElementById('new-game').addEventListener('click', () => {
+    location.reload();
+});
+
 
 function setScore(){
     score = foodQuantity - food.length;
