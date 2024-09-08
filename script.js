@@ -48,7 +48,7 @@ let tHeight;
 
 let squaresSize = 30;
 let squaresSizeClass = "large";
-let foodQuantity = 50;
+let foodQuantity = 25;
 let score = 0;
 let speed = 200;
 
@@ -163,6 +163,12 @@ function move(x, y, eat = false) {
     if (next.x >= tWidth){next.x = 0;}
     if (next.y >= tHeight){next.y = 0;}
     
+    if (!validations(next)) {
+        control();
+        document.querySelector('.dead').style.display = 'block';
+        return;
+    }
+
     for (let i = 0; i < food.length; i++) {
         if (food[i].x === next.x && food[i].y === next.y) {
             food.splice(i, 1);
@@ -181,6 +187,16 @@ function move(x, y, eat = false) {
     drawSnake();
 }
 
+function validations(next){
+    if (snake.items.length <= 1) return true;
+    let collision = snake.items.find((el) => {
+        if (el.x === next.x && el.y === next.y) {
+            return true;
+        }
+        return false;
+    });
+    return !collision;
+}
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);  // מעגל את הערך המינימלי כלפי מעלה
@@ -199,8 +215,9 @@ function restart(){
     drawSnake();
 }
 
+
 let stateGame = true;
-document.getElementById('control').addEventListener('click', () => {
+function control(){
     if (stateGame) {
         clearInterval(interval);
         stateGame = !stateGame;
@@ -210,6 +227,11 @@ document.getElementById('control').addEventListener('click', () => {
         stateGame = !stateGame;
         document.getElementById('control').innerHTML = '=';
     }
+}
+
+
+document.getElementById('control').addEventListener('click', () => {
+    control();
 });
 
 document.getElementById('restart').addEventListener('click', () => {
@@ -221,15 +243,31 @@ document.getElementById('new-game').addEventListener('click', () => {
     location.reload();
 });
 
+document.getElementById('continue').addEventListener('click', () => {
+    restartSnake();
+    control();
+    document.querySelector('.dead').style.display = 'none';
+});
 
 function setScore(){
     score = foodQuantity - food.length;
     document.getElementById('current-food').innerHTML = score;
     document.getElementById('all-food').innerHTML = foodQuantity;
+    drawFood();
     if (score === foodQuantity){
         restart();
         document.querySelector('.win').style.display = 'block';
     }
+}
+
+function restartSnake(){
+    let len = snake.items.length;
+    snake.items = [];
+    for (let i = 0; i < len; i++) {
+        snake.enqueue({x: i, y: 0});
+    }
+    drawSnake();
+    direction = {x: 1, y: 0};
 }
 
 initialTable();
